@@ -440,13 +440,15 @@
   }
 
   // Inventory box: one evidence tag per solved item. Clicking a tag reopens it.
+  // Slot order is shuffled on purpose so the tags don't spell the password in order.
+  var INV_ORDER = [4, 7, 1, 6, 3, 5, 2];
   function renderInventory() {
     var html = '<div class="inv-title">' + esc(C.ui.inventoryTitle) + '</div><div class="inv-slots">';
-    for (var n = 1; n <= 7; n++) {
+    INV_ORDER.forEach(function (n) {
       html += isSolved(n)
         ? '<button class="inv-tag" data-n="' + n + '"><span class="inv-num">№' + n + '</span><span class="inv-sym">' + esc(C.items[n].symbol) + '</span></button>'
         : '<div class="inv-slot"></div>';
-    }
+    });
     invEl.innerHTML = html + '</div>';
     invEl.querySelectorAll('.inv-tag').forEach(function (b) {
       b.addEventListener('click', function () { openItem(parseInt(b.dataset.n, 10)); });
@@ -768,14 +770,31 @@
 
   // ---------- item 5: photo with magnifier ----------
 
+  // Shrug emoji (own drawing), hidden tiny on the photo and seen through the magnifier.
+  var SHRUG_SVG =
+    '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M24 100 C24 72 35 62 50 62 C65 62 76 72 76 100 Z" fill="#c9ccd1"/>' +
+    '<path d="M35 68 L19 74 L13 52" fill="none" stroke="#c9ccd1" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M65 68 L81 74 L87 52" fill="none" stroke="#c9ccd1" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<ellipse cx="11" cy="45" rx="10" ry="6" transform="rotate(-25 11 45)" fill="#f7c948"/>' +
+    '<ellipse cx="89" cy="45" rx="10" ry="6" transform="rotate(25 89 45)" fill="#f7c948"/>' +
+    '<circle cx="50" cy="38" r="19" fill="#f7c948"/>' +
+    '<path d="M31 37 C30 15 70 13 70 35 C64 26 46 24 31 37 Z" fill="#eaa823"/>' +
+    '<path d="M40 34 Q43 32 46 34 M54 34 Q57 32 60 34" stroke="#7a4a12" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+    '<ellipse cx="43" cy="40" rx="2.6" ry="3.3" fill="#4a2a0c"/><ellipse cx="57" cy="40" rx="2.6" ry="3.3" fill="#4a2a0c"/>' +
+    '<ellipse cx="50" cy="49" rx="3" ry="1.8" fill="#8a4b2a"/></svg>';
+
   function item5(api) {
     var d = api.data, b = api.body;
     b.innerHTML = '<div class="i5-q">' + esc(d.question) + '</div>' +
-      '<div class="i5-wrap"><img class="i5-img" src="' + esc(d.photo) + '" alt="" draggable="false"><div class="i5-mark hidden"></div><div class="i5-lens hidden"></div></div>';
+      '<div class="i5-wrap"><img class="i5-img" src="' + esc(d.photo) + '" alt="" draggable="false"><div class="i5-mark hidden"></div>' +
+      (d.emoji ? '<div class="i5-emoji">' + SHRUG_SVG + '</div>' : '') +
+      '<div class="i5-lens hidden"><div class="i5-lens-inner">' + (d.emoji ? '<div class="i5-lens-emoji">' + SHRUG_SVG + '</div>' : '') + '</div></div></div>';
     var img = b.querySelector('.i5-img');
     var lens = b.querySelector('.i5-lens');
     var mark = b.querySelector('.i5-mark');
-    var LENS = 260, zoom = d.zoom || 2.5; // LENS matches .i5-lens size in style.css
+    var LENS = 260, LENS_BORDER = 6, zoom = d.zoom || 2.5; // match .i5-lens in style.css
+    var emojiEl = b.querySelector('.i5-emoji'), lensEmoji = b.querySelector('.i5-lens-emoji');
     var done = api.solved;
     lens.style.backgroundImage = 'url("' + d.photo + '")';
 
@@ -786,7 +805,14 @@
       mark.style.width = mark.style.height = 2 * r + 'px';
       mark.classList.toggle('hidden', !show);
     }
-    function onLoad() { placeMark(done || DEBUG); if (DEBUG && !done) mark.classList.add('debug'); }
+    function placeEmoji() {
+      if (!emojiEl) return;
+      var w = img.clientWidth, h = img.clientHeight, sz = d.emoji.size * w;
+      emojiEl.style.width = emojiEl.style.height = sz + 'px';
+      emojiEl.style.left = (d.emoji.x * w - sz / 2) + 'px';
+      emojiEl.style.top = (d.emoji.y * h - sz / 2) + 'px';
+    }
+    function onLoad() { placeMark(done || DEBUG); placeEmoji(); if (DEBUG && !done) mark.classList.add('debug'); }
     if (img.complete) onLoad(); else img.addEventListener('load', onLoad);
 
     function local(e) {
@@ -800,6 +826,13 @@
       lens.style.top = (p.y - LENS / 2) + 'px';
       lens.style.backgroundSize = (p.w * zoom) + 'px ' + (p.h * zoom) + 'px';
       lens.style.backgroundPosition = (-(p.x * zoom - LENS / 2)) + 'px ' + (-(p.y * zoom - LENS / 2)) + 'px';
+      if (lensEmoji) {
+        // Same spot as on the photo, enlarged by the zoom, inside the lens border.
+        var sz = d.emoji.size * p.w * zoom;
+        lensEmoji.style.width = lensEmoji.style.height = sz + 'px';
+        lensEmoji.style.left = ((d.emoji.x * p.w - p.x) * zoom + LENS / 2 - LENS_BORDER - sz / 2) + 'px';
+        lensEmoji.style.top = ((d.emoji.y * p.h - p.y) * zoom + LENS / 2 - LENS_BORDER - sz / 2) + 'px';
+      }
     });
     img.addEventListener('mouseleave', function () { lens.classList.add('hidden'); });
     var wrong = 0;

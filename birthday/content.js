@@ -148,6 +148,9 @@ window.CONTENT = {
       // the photo width. Use ?debug and click the photo to read values.
       hotspot: { x: 0.313, y: 0.789, r: 0.025 },
       zoom: 10,
+      // Tiny shrug emoji hidden on the photo, seen through the magnifier.
+      // x, y like the hotspot; size is a share of the photo width. Remove this line to hide it.
+      emoji: { x: 0.313, y: 0.783, size: 0.016 },
       wrongLines: [
         'Не здесь.',
         'Холодно.',
@@ -252,10 +255,10 @@ window.CONTENT = {
   desktop: {
     title: 'Рабочий стол',
     notes: [
-      { text: 'Черновик: тут будет моё первое послание.', color: 'yellow' },
-      { text: 'Черновик: спасибо, что ты есть.', color: 'pink' },
-      { text: 'Черновик: помнишь Грузию?', color: 'green' },
-      { text: 'Черновик: с днём рождения! ♥', color: 'blue' }
+      { text: 'ты не представляешь, как многому я у тебя учусь', color: 'yellow' },
+      { text: 'пожалуйста, продолжай быть собой', color: 'pink' },
+      { text: 'а я буду рядом', color: 'green' },
+      { text: 'с днем рождения!', color: 'blue' }
     ],
     photos: [
       { src: 'photos/desktop-1.jpg', caption: '' },

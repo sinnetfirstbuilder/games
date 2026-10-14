@@ -1077,3 +1077,9 @@ html, body {
 .landmark text { font: 700 20px 'PT Serif', serif; fill: #3a2a18; }
 .pol-cap.long { font-size: 20px; }
 .polaroid.small .pol-cap.long { font-size: 14px; }
+
+/* Shrug emoji hidden on the photo; the lens shows a sharp enlarged copy. */
+.i5-emoji { position: absolute; pointer-events: none; z-index: 1; }
+.i5-emoji svg, .i5-lens-emoji svg { display: block; width: 100%; height: 100%; }
+.i5-lens-inner { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; }
+.i5-lens-emoji { position: absolute; }
