@@ -142,7 +142,7 @@ window.CONTENT = {
       symbol: 'e',
       hint: 'Посмотри на свои руки.',
       photo: 'photos/item5-us.jpg',
-      question: 'Самая важная улика всегда на виду. Найди её у Маши.',
+      question: 'Самая важная улика всегда на виду.',
       // Hidden detail. x and y are shares of the photo width and height
       // (0 = left/top, 1 = right/bottom). r is the radius as a share of
       // the photo width. Use ?debug and click the photo to read values.
