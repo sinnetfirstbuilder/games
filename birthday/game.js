@@ -770,7 +770,7 @@
 
   // ---------- item 5: photo with magnifier ----------
 
-  // Shrug emoji (own drawing), hidden tiny on the photo and seen through the magnifier.
+  // Shrug emoji (own drawing), drawn only inside the magnifier lens.
   var SHRUG_SVG =
     '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
     '<path d="M24 100 C24 72 35 62 50 62 C65 62 76 72 76 100 Z" fill="#c9ccd1"/>' +
@@ -788,13 +788,12 @@
     var d = api.data, b = api.body;
     b.innerHTML = '<div class="i5-q">' + esc(d.question) + '</div>' +
       '<div class="i5-wrap"><img class="i5-img" src="' + esc(d.photo) + '" alt="" draggable="false"><div class="i5-mark hidden"></div>' +
-      (d.emoji ? '<div class="i5-emoji">' + SHRUG_SVG + '</div>' : '') +
       '<div class="i5-lens hidden"><div class="i5-lens-inner">' + (d.emoji ? '<div class="i5-lens-emoji">' + SHRUG_SVG + '</div>' : '') + '</div></div></div>';
     var img = b.querySelector('.i5-img');
     var lens = b.querySelector('.i5-lens');
     var mark = b.querySelector('.i5-mark');
     var LENS = 260, LENS_BORDER = 6, zoom = d.zoom || 2.5; // match .i5-lens in style.css
-    var emojiEl = b.querySelector('.i5-emoji'), lensEmoji = b.querySelector('.i5-lens-emoji');
+    var lensEmoji = b.querySelector('.i5-lens-emoji');
     var done = api.solved;
     lens.style.backgroundImage = 'url("' + d.photo + '")';
 
@@ -805,14 +804,7 @@
       mark.style.width = mark.style.height = 2 * r + 'px';
       mark.classList.toggle('hidden', !show);
     }
-    function placeEmoji() {
-      if (!emojiEl) return;
-      var w = img.clientWidth, h = img.clientHeight, sz = d.emoji.size * w;
-      emojiEl.style.width = emojiEl.style.height = sz + 'px';
-      emojiEl.style.left = (d.emoji.x * w - sz / 2) + 'px';
-      emojiEl.style.top = (d.emoji.y * h - sz / 2) + 'px';
-    }
-    function onLoad() { placeMark(done || DEBUG); placeEmoji(); if (DEBUG && !done) mark.classList.add('debug'); }
+    function onLoad() { placeMark(done || DEBUG); if (DEBUG && !done) mark.classList.add('debug'); }
     if (img.complete) onLoad(); else img.addEventListener('load', onLoad);
 
     function local(e) {

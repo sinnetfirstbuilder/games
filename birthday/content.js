@@ -148,7 +148,7 @@ window.CONTENT = {
       // the photo width. Use ?debug and click the photo to read values.
       hotspot: { x: 0.313, y: 0.789, r: 0.025 },
       zoom: 10,
-      // Tiny shrug emoji hidden on the photo, seen through the magnifier.
+      // Shrug emoji on the ring, visible only through the magnifier.
       // x, y like the hotspot; size is a share of the photo width. Remove this line to hide it.
       emoji: { x: 0.313, y: 0.783, size: 0.016 },
       wrongLines: [
