@@ -871,9 +871,14 @@
     var sea = project(seaLon, seaLat, size);
     var seaHTML = (seaLon > box.west && seaLon < box.east && seaLat > box.south && seaLat < box.north)
       ? '<text class="sea" x="' + sea[0] + '" y="' + sea[1] + '">' + esc(d.seaLabel) + '</text>' : '';
-    var marks = (d.landmarks || []).map(function (m) {
+    // Dots for orientation landmarks plus (optionally) the stops themselves,
+    // all looking the same so the dots alone don't give away the answers.
+    var dots = (d.landmarks || []).concat(d.showStopDots ? stops : []);
+    var marks = dots.map(function (m) {
       var q = project(m.lon, m.lat, size);
-      return '<g class="landmark" transform="translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')"><circle r="6"/><text x="' + (m.labelLeft ? -10 : 10) + '" y="5" text-anchor="' + (m.labelLeft ? 'end' : 'start') + '">' + esc(m.name) + '</text></g>';
+      var label = d.showLandmarkNames && (d.landmarks || []).indexOf(m) >= 0
+        ? '<text x="' + (m.labelLeft ? -10 : 10) + '" y="5" text-anchor="' + (m.labelLeft ? 'end' : 'start') + '">' + esc(m.name) + '</text>' : '';
+      return '<g class="landmark" transform="translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')"><circle r="6"/>' + label + '</g>';
     }).join('');
     b.innerHTML =
       '<div class="i6-left"><svg class="i6-map" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">' +

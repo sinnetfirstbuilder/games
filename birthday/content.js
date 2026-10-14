@@ -179,6 +179,10 @@ window.CONTENT = {
       mapView: { west: 44.4, east: 46.5, south: 41.3, north: 42.2 },
       // Grid line spacing in degrees.
       gridStep: 0.5,
+      // true: write town names next to the landmark dots.
+      showLandmarkNames: false,
+      // true: also put a dot on every stop (same look as the landmark dots).
+      showStopDots: true,
       // Places drawn on the map for orientation only (not stops).
       // labelLeft: true puts the name on the left of the dot.
       landmarks: [
