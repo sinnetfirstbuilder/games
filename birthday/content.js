@@ -146,7 +146,7 @@ window.CONTENT = {
       // Hidden detail. x and y are shares of the photo width and height
       // (0 = left/top, 1 = right/bottom). r is the radius as a share of
       // the photo width. Use ?debug and click the photo to read values.
-      hotspot: { x: 0.72, y: 0.30, r: 0.05 },
+      hotspot: { x: 0.313, y: 0.789, r: 0.025 },
       zoom: 2.5,
       wrongLines: [
         'Не здесь.',
@@ -182,11 +182,11 @@ window.CONTENT = {
       ],
       // Trip stops in order. lat/lon in decimal degrees (Google Maps: right-click → copy).
       stops: [
-        { name: 'Сигнахи',            lat: 41.6186, lon: 45.9217, photo: 'photos/georgia-1.jpg', clue: 'Черновик: город на холме, крепостная стена и вид на всю Алазанскую долину.' },
-        { name: 'Сагареджо',          lat: 41.7340, lon: 45.3315, photo: 'photos/georgia-2.jpg', clue: 'Черновик: первый городок Кахетии по дороге из Тбилиси.' },
-        { name: 'Гомборский перевал', lat: 41.8686, lon: 45.3472, photo: 'photos/georgia-3.jpg', clue: 'Черновик: серпантин через лес, где уши закладывает от высоты.' },
-        { name: 'Кисисхеви',          lat: 41.8978, lon: 45.5436, photo: 'photos/georgia-4.jpg', clue: 'Черновик: деревня у Телави, виноградники и тишина.' },
-        { name: 'Коджори',            lat: 41.6640, lon: 44.7020, photo: 'photos/georgia-5.jpg', clue: 'Черновик: над Тбилиси, в горах, куда едут за прохладой.' }
+        { name: 'Сигнахи',            lat: 41.6186, lon: 45.9217, photo: 'photos/georgia-1.jpg', clue: 'Там мы пили чай с девочками, наша первая совместная поездка' },
+        { name: 'Сагареджо',          lat: 41.7340, lon: 45.3315, photo: 'photos/georgia-2.jpg', clue: 'Мы ели шашлык, а потом ты угостила меня там сникерсом без сахара' },
+        { name: 'Гомборский перевал', lat: 41.8686, lon: 45.3472, photo: 'photos/georgia-3.jpg', clue: 'Мы там ходили писить' },
+        { name: 'Кисисхеви',          lat: 41.8978, lon: 45.5436, photo: 'photos/georgia-4.jpg', clue: 'Купались в бассейне с соплями старых грузинов' },
+        { name: 'Коджори',            lat: 41.6640, lon: 44.7020, photo: 'photos/georgia-5.jpg', clue: 'Забирались на гору по страшной лестнице' }
       ]
     },
 
@@ -200,15 +200,15 @@ window.CONTENT = {
       unlockedText: '6-7',
       // 9 photos. Exactly one has villain: true.
       people: [
-        { photo: 'photos/captcha-1.jpg', text: 'Подозреваемый 1: слишком милый, чтобы быть злодеем.' },
-        { photo: 'photos/captcha-2.jpg', text: 'Подозреваемый 2: у него алиби. Он спал.' },
-        { photo: 'photos/captcha-3.jpg', text: 'Подозреваемый 3: максимум может съесть последний кусок пиццы.' },
-        { photo: 'photos/captcha-4.jpg', text: 'Подозреваемый 4: злодей? Он даже паука не обидит.' },
-        { photo: 'photos/captcha-maksim.jpg', text: 'Максим! Злодей пойман.', villain: true },
-        { photo: 'photos/captcha-5.jpg', text: 'Подозреваемый 5: просто проходил мимо.' },
-        { photo: 'photos/captcha-6.jpg', text: 'Подозреваемый 6: подозрительно, но нет.' },
-        { photo: 'photos/captcha-7.jpg', text: 'Подозреваемый 7: этот злодей только в караоке.' },
-        { photo: 'photos/captcha-8.jpg', text: 'Подозреваемый 8: слишком хорош для этой роли.' }
+        { photo: 'photos/captcha-1.jpg', text: 'Черновик: подозрительно серьёзный, но сегодня не он.' },
+        { photo: 'photos/captcha-2.jpg', text: 'Билан? Невозможное возможно, но не в этот раз.' },
+        { photo: 'photos/captcha-3.jpg', text: 'Канье? Он подарил нам концерт. Какой же он злодей!' },
+        { photo: 'photos/captcha-4.jpg', text: 'Крид? Холостяк, но не злодей.' },
+        { photo: 'photos/captcha-5.jpg', text: 'Максим? Слишком очевидно. Злодей хитрее.' },
+        { photo: 'photos/captcha-6.jpg', text: 'Черновик: этот подозреваемый чист.' },
+        { photo: 'photos/captcha-villain.jpg', text: 'Злодей пойман!', villain: true },
+        { photo: 'photos/captcha-8.jpg', text: 'Тиньков? Слишком занят. Не злодей.' },
+        { photo: 'photos/captcha-9.jpg', text: 'Черновик: невиновен. Наверное.' }
       ]
     }
   },
@@ -251,10 +251,10 @@ window.CONTENT = {
       { text: 'Черновик: с днём рождения! ♥', color: 'blue' }
     ],
     photos: [
-      { src: 'photos/desktop-1.jpg', caption: 'Черновик подписи 1' },
-      { src: 'photos/desktop-2.jpg', caption: 'Черновик подписи 2' },
-      { src: 'photos/desktop-3.jpg', caption: 'Черновик подписи 3' },
-      { src: 'photos/desktop-4.jpg', caption: 'Черновик подписи 4' }
+      { src: 'photos/desktop-1.jpg', caption: '' },
+      { src: 'photos/desktop-2.jpg', caption: '' },
+      { src: 'photos/desktop-3.jpg', caption: '' },
+      { src: 'photos/desktop-4.jpg', caption: '' }
     ]
   },
 
@@ -263,8 +263,8 @@ window.CONTENT = {
   // look: 'mug', 'duck', 'paper' draws an object; '' makes an invisible spot.
   // text and photo are optional (leave '' to skip).
   eggs: [
-    { x: 1330, y: 292, w: 70, h: 85,  look: 'mug',   title: 'Кофе детектива', text: 'Черновик: холодный, как это дело.', photo: 'photos/egg-1.jpg' },
-    { x: 1335, y: 400, w: 95, h: 78,  look: 'duck',  title: 'Уточка-помощник', text: 'Черновик: объясни загадку уточке, и ответ придёт сам.', photo: '' },
-    { x: 905,  y: 428, w: 60, h: 52,  look: 'paper', title: 'Скомканный листок', text: '', photo: 'photos/egg-3.jpg' }
+    { x: 1330, y: 292, w: 70, h: 85,  look: 'mug',   title: '', text: '', photo: 'photos/egg-mug.jpg' },
+    { x: 1335, y: 400, w: 95, h: 78,  look: 'duck',  title: '', text: '', photo: 'photos/egg-duck.jpg' },
+    { x: 905,  y: 428, w: 60, h: 52,  look: 'paper', title: '', text: '', photo: 'photos/egg-paper.jpg' }
   ]
 };

@@ -930,6 +930,8 @@
       var L = letterRPaths(lx, ly, lw, lh);
       var sw = Math.max(26, Math.min(lw, lh) * 0.1);
 
+      var leftX = Math.max(10, Math.round((GX - POL_W) / 2)), rightX = Math.min(BW - POL_W - 10, Math.round(GX + gw + (BW - GX - gw - POL_W) / 2));
+      var spots = shuffle([[leftX, 40], [rightX, 40], [leftX, 270], [rightX, 270], [leftX, 500], [rightX, 500]]);
       var pieces = [];
       for (var i = 0; i < M; i++) {
         var col = i % cols, row = Math.floor(i / cols);
@@ -941,11 +943,11 @@
           '<path d="' + L.d + '" fill="none" stroke="#ff2d55" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>' +
           '<circle cx="' + L.ball.cx + '" cy="' + L.ball.cy + '" r="' + (sw * 0.85) + '" fill="#ff2d55" stroke="#3a0006" stroke-opacity=".55" stroke-width="4"/></svg>';
         var pol = div('polaroid', '<div class="pol-photo"><img src="' + esc(stops[i].photo) + '" alt="" draggable="false">' + slice + '</div><div class="pol-cap' + (stops[i].name.length > 12 ? ' long' : '') + '">' + esc(stops[i].name) + '</div>');
-        // Scatter on the left and right of the grid.
-        var leftSide = i % 2 === 0;
-        var k2 = Math.floor(i / 2);
-        var px = leftSide ? rand(10, Math.max(12, GX - POL_W - 20)) : rand(GX + gw + 20, BW - POL_W - 10);
-        var py = 40 + (k2 * 140) % 420 + rand(0, 40);
+        // Scatter beside the grid: fixed non-overlapping spots in shuffled order,
+        // random spots only if there are more photos than spots.
+        var spot = spots[i];
+        var px = spot ? spot[0] + rand(-10, 10) : rand(10, BW - POL_W - 10);
+        var py = spot ? spot[1] + rand(-8, 8) : rand(40, 500);
         pol.style.left = px + 'px';
         pol.style.top = py + 'px';
         pol.style.setProperty('--rot', rand(-10, 10).toFixed(1) + 'deg');
