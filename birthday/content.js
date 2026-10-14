@@ -18,7 +18,17 @@ window.CONTENT = {
     ok: 'Понятно',
     solvedLine: 'Улика №{n} раскрыта. Символ: {s}',
     stamp: 'РАСКРЫТО',
-    back: '← Назад к столу'
+    back: '← Назад к столу',
+    // Frame around the game.
+    menu: 'МЕНЮ',
+    menuTitle: 'Меню',
+    menuContinue: 'Продолжить',
+    menuRestart: 'Начать заново',
+    restartConfirm: 'Точно? Нажми ещё раз',
+    inventoryTitle: 'Улики',
+    // Shown in the text box at the bottom.
+    welcome: 'Маша, на столе и на доске спрятаны 7 улик. Наводи лупу и нажимай на предметы.',
+    helpText: 'Нажимай на предметы на столе и на доске. Каждая раскрытая улика попадает в коробку справа внизу. Собери символы и введи пароль на ноутбуке.'
   },
 
   // Note pinned to the top-left of the board.
@@ -241,12 +251,13 @@ window.CONTENT = {
     ]
   },
 
-  // Hidden clickable spots on the desk. x, y, w, h in scene pixels (scene is 1600x900).
+  // Hidden clickable spots on the desk. x, y, w, h in scene pixels (the room view is 1460x640).
+  // Use ?debug and click the scene to read coordinates.
   // look: 'mug', 'duck', 'paper' draws an object; '' makes an invisible spot.
   // text and photo are optional (leave '' to skip).
   eggs: [
-    { x: 1080, y: 770, w: 90, h: 100, look: 'mug',   title: 'Кофе детектива', text: 'Черновик: холодный, как это дело.', photo: 'photos/egg-1.jpg' },
-    { x: 60,   y: 780, w: 110, h: 90, look: 'duck',  title: 'Уточка-помощник', text: 'Черновик: объясни загадку уточке, и ответ придёт сам.', photo: '' },
-    { x: 950,  y: 800, w: 80, h: 70,  look: 'paper', title: 'Скомканный листок', text: '', photo: 'photos/egg-3.jpg' }
+    { x: 1330, y: 292, w: 70, h: 85,  look: 'mug',   title: 'Кофе детектива', text: 'Черновик: холодный, как это дело.', photo: 'photos/egg-1.jpg' },
+    { x: 1335, y: 400, w: 95, h: 78,  look: 'duck',  title: 'Уточка-помощник', text: 'Черновик: объясни загадку уточке, и ответ придёт сам.', photo: '' },
+    { x: 905,  y: 428, w: 60, h: 52,  look: 'paper', title: 'Скомканный листок', text: '', photo: 'photos/egg-3.jpg' }
   ]
 };

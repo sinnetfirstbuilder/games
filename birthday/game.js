@@ -10,7 +10,9 @@
   var sceneEl = document.getElementById('scene');
   var modalEl = document.getElementById('modal');
   var overlayRoot = document.getElementById('overlay-root');
-  var toastEl = document.getElementById('toast');
+  var fullRoot = document.getElementById('full-root');
+  var textEl = document.getElementById('text');
+  var invEl = document.getElementById('inventory');
 
   var scale = 1;
   var params = new URLSearchParams(location.search);
@@ -54,10 +56,14 @@
     void el.offsetWidth;
     el.classList.add(cls);
   }
-  // Client (screen) coordinates -> stage coordinates.
-  function toStage(e) {
-    var r = stage.getBoundingClientRect();
-    return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale };
+  // Total on-screen scale of an element (stage scale times any inner CSS scale).
+  function scaleOf(el) {
+    return el.offsetWidth ? el.getBoundingClientRect().width / el.offsetWidth : scale;
+  }
+  // Client (screen) coordinates -> coordinates inside an unrotated element.
+  function toLocal(e, el) {
+    var r = el.getBoundingClientRect(), s = scaleOf(el);
+    return { x: (e.clientX - r.left) / s, y: (e.clientY - r.top) / s };
   }
 
   // ---------- stage scaling (letterboxed) ----------
@@ -100,16 +106,26 @@
   }
   function isSolved(n) { return !!progress.solved[n]; }
 
-  // ---------- toast and dialog ----------
+  // ---------- text box and dialog ----------
 
-  var toastTimer = null;
-  function toast(text, ms) {
-    toastEl.textContent = text;
-    toastEl.classList.remove('hidden');
-    replayClass(toastEl, 'pop');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.add('hidden'); }, ms || 2400);
+  // Writes a line into the black text box at the bottom, typewriter style.
+  var typeTimer = null, typeFull = '';
+  function say(text) {
+    clearInterval(typeTimer);
+    typeFull = String(text || '');
+    var i = 0;
+    textEl.textContent = '';
+    typeTimer = setInterval(function () {
+      i += 2;
+      textEl.textContent = typeFull.slice(0, i);
+      if (i >= typeFull.length) clearInterval(typeTimer);
+    }, 18);
   }
+  var toast = say;
+  document.getElementById('textbox').addEventListener('click', function () {
+    clearInterval(typeTimer);
+    textEl.textContent = typeFull;
+  });
 
   function dialog(opts) {
     var wrap = div('dialog-wrap');
@@ -139,11 +155,12 @@
         e.preventDefault();
         var sx = e.clientX, sy = e.clientY;
         var ox = parseFloat(p.el.style.left) || 0, oy = parseFloat(p.el.style.top) || 0;
+        var k = scaleOf(p.el.parentNode);
         p.el.style.zIndex = ++dragZ;
         p.el.classList.add('dragging');
         function move(ev) {
-          p.el.style.left = ox + (ev.clientX - sx) / scale + 'px';
-          p.el.style.top = oy + (ev.clientY - sy) / scale + 'px';
+          p.el.style.left = ox + (ev.clientX - sx) / k + 'px';
+          p.el.style.top = oy + (ev.clientY - sy) / k + 'px';
         }
         function up() {
           document.removeEventListener('pointermove', move);
@@ -310,23 +327,52 @@
     return petals + '<circle cx="30" cy="28" r="6" fill="#f6d04d"/>';
   }
 
+  var DESK_SVG = (function () {
+    var drawers = [[40, 522, 360, 52], [40, 582, 360, 52], [420, 522, 620, 40], [1060, 522, 360, 52], [1060, 582, 360, 52]];
+    var out = '<svg class="desk-svg" viewBox="0 0 1460 640"><defs>' +
+      '<linearGradient id="dTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6e5034"/><stop offset="1" stop-color="#a7835a"/></linearGradient>' +
+      '<linearGradient id="dFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a4c30"/><stop offset="1" stop-color="#3a2817"/></linearGradient>' +
+      '<linearGradient id="dDrawer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b6a46"/><stop offset="1" stop-color="#5e4429"/></linearGradient>' +
+      '<filter id="dGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.003 0.07" numOctaves="3" seed="4"/>' +
+      '<feColorMatrix values="0 0 0 0 0.2  0 0 0 0 0.11  0 0 0 0 0.04  0 0 0 0.55 0"/><feComposite operator="in" in2="SourceGraphic"/></filter>' +
+      '</defs>' +
+      '<polygon points="120,300 1340,300 1445,495 15,495" fill="url(#dTop)"/>' +
+      '<polygon points="120,300 1340,300 1445,495 15,495" fill="#000" filter="url(#dGrain)"/>' +
+      '<rect x="15" y="495" width="1430" height="16" fill="#4e3620"/><rect x="15" y="495" width="1430" height="3" fill="#d9b07a" opacity=".55"/>' +
+      '<rect x="20" y="511" width="1420" height="129" fill="url(#dFront)"/>' +
+      '<rect x="420" y="568" width="620" height="72" fill="#120b06"/>';
+    drawers.forEach(function (r) {
+      var cx = r[0] + r[2] / 2, cy = r[1] + r[3] / 2;
+      out += '<rect x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="3" fill="url(#dDrawer)" stroke="#33210f" stroke-width="2"/>' +
+        '<rect x="' + (r[0] + 4) + '" y="' + (r[1] + 3) + '" width="' + (r[2] - 8) + '" height="2" fill="rgba(255,230,190,.25)"/>' +
+        '<path d="M' + (cx - 28) + ' ' + (cy - 4) + ' Q' + cx + ' ' + (cy + 12) + ' ' + (cx + 28) + ' ' + (cy - 4) + '" fill="none" stroke="#d8b25a" stroke-width="5" stroke-linecap="round"/>' +
+        '<circle cx="' + (cx - 28) + '" cy="' + (cy - 4) + '" r="5" fill="#a8812f"/><circle cx="' + (cx + 28) + '" cy="' + (cy - 4) + '" r="5" fill="#a8812f"/>';
+    });
+    return out + '</svg>';
+  })();
+
+  var LAMP_SVG =
+    '<svg class="lamp" viewBox="0 0 260 360"><defs><linearGradient id="shadeG" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="#4f9a64"/><stop offset="1" stop-color="#1c4a2b"/></linearGradient></defs>' +
+    '<ellipse cx="88" cy="346" rx="66" ry="12" fill="rgba(0,0,0,.45)"/>' +
+    '<ellipse cx="85" cy="336" rx="56" ry="14" fill="#173d25"/><ellipse cx="85" cy="330" rx="50" ry="11" fill="#2f6b42"/>' +
+    '<line x1="85" y1="328" x2="58" y2="190" stroke="#2a2a2a" stroke-width="9" stroke-linecap="round"/>' +
+    '<line x1="58" y1="190" x2="150" y2="100" stroke="#2a2a2a" stroke-width="8" stroke-linecap="round"/>' +
+    '<circle cx="58" cy="190" r="8" fill="#555"/>' +
+    '<g transform="rotate(32 160 104)"><path d="M132 78 L188 78 L216 142 L104 142 Z" fill="url(#shadeG)"/>' +
+    '<path d="M140 82 L150 82 L132 138 L118 138 Z" fill="rgba(255,255,255,.18)"/>' +
+    '<ellipse cx="160" cy="142" rx="56" ry="10" fill="#fff4c4"/></g></svg>';
+
   function buildScene() {
-    sceneEl.style.setProperty('--cork', CORK_BG);
-    sceneEl.style.setProperty('--wood', WOOD_BG);
+    stage.style.setProperty('--cork', CORK_BG);
+    stage.style.setProperty('--wood', WOOD_BG);
     var html = '<div class="wall"></div>' +
       '<div class="board"><div class="cork"></div></div>' +
       '<div class="fingerprint">' + pin('#e8b923') + '<svg viewBox="0 0 120 140">' + fingerprintSVG() + '</svg></div>' +
-      '<svg class="board-strings" viewBox="0 0 1600 470"><g fill="none" stroke="#b3121b" stroke-width="2.5">' +
-      '<polyline points="229,57 477,74"/><polyline points="917,74 1313,80"/><polyline points="917,74 966,248"/><polyline points="229,57 588,252"/></g></svg>' +
-      '<div class="note paper">' + pin('#d22') + '<h3>' + esc(C.board.noteTitle) + '</h3><p>' + esc(C.board.noteText) + '</p></div>' +
-      '<div class="desk"></div><div class="desk-edge"></div>' +
-      '<svg class="lamp" viewBox="0 0 320 330">' +
-      '<ellipse cx="90" cy="300" rx="70" ry="18" fill="#1f1f1f"/><ellipse cx="90" cy="294" rx="62" ry="13" fill="#3a3a3a"/>' +
-      '<line x1="90" y1="292" x2="140" y2="150" stroke="#2c2c2c" stroke-width="12" stroke-linecap="round"/>' +
-      '<line x1="140" y1="150" x2="230" y2="70" stroke="#2c2c2c" stroke-width="10" stroke-linecap="round"/>' +
-      '<circle cx="140" cy="150" r="10" fill="#444"/>' +
-      '<path d="M205 40 L290 105 L255 140 L180 70 Z" fill="#1d5a3a"/><ellipse cx="272" cy="122" rx="28" ry="10" transform="rotate(45 272 122)" fill="#fff6c8"/></svg>' +
-      '<div class="lamp-light"></div>';
+      '<svg class="board-strings" viewBox="0 0 1460 300"><g fill="none" stroke="#a8111a" stroke-width="2.2">' +
+      '<polyline points="350,34 515,36"/><polyline points="855,36 1108,40"/><polyline points="855,36 790,138"/><polyline points="350,34 545,138"/></g></svg>' +
+      '<div class="note">' + pin('#d22') + '<h3>' + esc(C.board.noteTitle) + '</h3><p>' + esc(C.board.noteText) + '</p></div>' +
+      DESK_SVG + LAMP_SVG + '<div class="lamp-light"></div>';
 
     for (var n = 1; n <= 7; n++) {
       html += '<div class="scene-item it' + n + '" data-n="' + n + '">' + sceneItemArt(n) +
@@ -340,6 +386,7 @@
     C.eggs.forEach(function (egg, i) {
       html += '<div class="egg egg-' + esc(egg.look || 'none') + '" data-egg="' + i + '" style="left:' + egg.x + 'px;top:' + egg.y + 'px;width:' + egg.w + 'px;height:' + egg.h + 'px">' + eggArt(egg.look) + '</div>';
     });
+    html += '<div class="vignette"></div>';
 
     sceneEl.innerHTML = html;
 
@@ -385,7 +432,45 @@
     var t = sceneEl.querySelector('.laptop-screen-text');
     t.textContent = progress.unlocked ? C.laptop.unlockedScreen : C.laptop.lockedScreen;
     sceneEl.querySelector('.laptop').classList.toggle('unlocked', !!progress.unlocked);
+    renderInventory();
   }
+
+  // Inventory box: one evidence tag per solved item. Clicking a tag reopens it.
+  function renderInventory() {
+    var html = '<div class="inv-title">' + esc(C.ui.inventoryTitle) + '</div><div class="inv-slots">';
+    for (var n = 1; n <= 7; n++) {
+      html += isSolved(n)
+        ? '<button class="inv-tag" data-n="' + n + '"><span class="inv-num">№' + n + '</span><span class="inv-sym">' + esc(C.items[n].symbol) + '</span></button>'
+        : '<div class="inv-slot"></div>';
+    }
+    invEl.innerHTML = html + '</div>';
+    invEl.querySelectorAll('.inv-tag').forEach(function (b) {
+      b.addEventListener('click', function () { openItem(parseInt(b.dataset.n, 10)); });
+    });
+  }
+
+  // ---------- frame: menu and help ----------
+
+  function openMenu() {
+    if (overlayRoot.querySelector('.menu-card')) return;
+    var wrap = div('dialog-wrap');
+    wrap.innerHTML = '<div class="dialog menu-card"><h3>' + esc(C.ui.menuTitle) + '</h3>' +
+      '<button class="btn btn-big m-cont">' + esc(C.ui.menuContinue) + '</button>' +
+      '<button class="btn m-restart">' + esc(C.ui.menuRestart) + '</button></div>';
+    overlayRoot.appendChild(wrap);
+    var armed = false;
+    wrap.querySelector('.m-cont').addEventListener('click', function () { wrap.remove(); });
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) wrap.remove(); });
+    wrap.querySelector('.m-restart').addEventListener('click', function () {
+      if (!armed) { armed = true; this.textContent = C.ui.restartConfirm; return; }
+      try { localStorage.removeItem(STORE_KEY); } catch (err) { /* ignore */ }
+      location.href = location.pathname;
+    });
+  }
+  var menuBtn = document.getElementById('menu-btn');
+  menuBtn.innerHTML = C.ui.menu.split('').map(function (ch) { return '<span>' + esc(ch) + '</span>'; }).join('');
+  menuBtn.addEventListener('click', openMenu);
+  document.getElementById('help-btn').addEventListener('click', function () { say(C.ui.helpText); });
 
   // ---------- modal ----------
 
@@ -393,34 +478,34 @@
 
   function openPanel(title, withHint, hintText) {
     closeModal();
-    modalEl.innerHTML = '';
-    var panel = div('panel paper');
-    panel.innerHTML = '<div class="panel-head"><h2>' + esc(title) + '</h2><div class="panel-btns">' +
+    say('');
+    var panel = div('closeup');
+    panel.innerHTML = (title ? '<div class="cu-title">' + esc(title) + '</div>' : '') +
       (withHint ? '<button class="btn btn-hint">' + esc(C.ui.hint) + '</button>' : '') +
-      '<button class="btn btn-close" title="' + esc(C.ui.close) + '">✕</button></div></div>' +
-      '<div class="hint-box hidden">' + esc(hintText || '') + '</div>' +
-      '<div class="panel-body"></div>';
+      '<div class="cu-stage"><div class="panel-body"></div></div>' +
+      '<button class="cu-back" title="' + esc(C.ui.close) + '"><svg viewBox="0 0 120 70"><path d="M104 60 Q104 20 52 20 L52 4 L10 32 L52 60 L52 42 Q84 42 86 60 Z"/></svg>' +
+      '<span>' + esc(C.ui.close) + '</span></button>';
+    modalEl.innerHTML = '';
     modalEl.appendChild(panel);
     modalEl.classList.remove('hidden');
-    panel.querySelector('.btn-close').addEventListener('click', closeModal);
+    panel.querySelector('.cu-back').addEventListener('click', closeModal);
     var hb = panel.querySelector('.btn-hint');
-    if (hb) hb.addEventListener('click', function () { panel.querySelector('.hint-box').classList.toggle('hidden'); });
+    if (hb) hb.addEventListener('click', function () { say(hintText); });
     current = { panel: panel, cleanup: null };
     return panel;
   }
 
-  function hideToast() { clearTimeout(toastTimer); toastEl.classList.add('hidden'); }
-
   function closeModal() {
-    hideToast();
+    if (current) say('');
     if (current && current.cleanup) current.cleanup();
     current = null;
     modalEl.classList.add('hidden');
     modalEl.innerHTML = '';
   }
-  modalEl.addEventListener('click', function (e) { if (e.target === modalEl) closeModal(); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !overlayRoot.querySelector('.dialog-wrap')) closeModal();
+    if (e.key !== 'Escape') return;
+    var dlg = overlayRoot.querySelector('.dialog-wrap');
+    if (dlg) dlg.remove(); else closeModal();
   });
 
   function showSolvedBox(panel, n) {
@@ -701,8 +786,8 @@
     if (img.complete) onLoad(); else img.addEventListener('load', onLoad);
 
     function local(e) {
-      var r = img.getBoundingClientRect();
-      return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale, w: r.width / scale, h: r.height / scale };
+      var r = img.getBoundingClientRect(), k = scaleOf(b);
+      return { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k, w: r.width / k, h: r.height / k };
     }
     img.addEventListener('mousemove', function (e) {
       var p = local(e);
@@ -944,7 +1029,7 @@
   function openLaptop() {
     var L = C.laptop;
     var panel = openPanel('', false);
-    panel.classList.add('laptop-panel');
+    panel.classList.add('laptop-mode');
     var body = panel.querySelector('.panel-body');
     var n = C.password.length;
     var boxes = '';
@@ -1048,10 +1133,9 @@
 
   function showFinale() {
     var f = C.finale;
-    hideToast();
     var el = div('finale', '<canvas width="1600" height="900"></canvas><div class="finale-text"><h1>' + esc(fmt(f.title, { NAME: C.name })) + '</h1>' +
       '<p>' + esc(f.subtitle) + '</p><div class="finale-click">' + esc(f.clickHint) + '</div></div>');
-    overlayRoot.appendChild(el);
+    fullRoot.appendChild(el);
     var stop = startConfetti(el.querySelector('canvas'));
     el.addEventListener('click', function () { stop(); el.remove(); showDesktop(); });
   }
@@ -1060,8 +1144,8 @@
 
   function showDesktop() {
     var D = C.desktop;
-    var el = div('desktop', '<div class="desk-bar"><span>' + esc(D.title) + '</span><button class="btn desk-close">' + esc(C.ui.back) + '</button></div><div class="desk-area"></div>');
-    overlayRoot.appendChild(el);
+    var el = div('desktop', '<div class="desk-bar"><span>' + esc(D.title) + '</span><button class="desk-close">' + esc(C.ui.back) + '</button></div><div class="desk-area"></div>');
+    fullRoot.appendChild(el);
     var area = el.querySelector('.desk-area');
     var items = [];
     D.notes.forEach(function (nt) {
@@ -1107,7 +1191,7 @@
     stage.appendChild(panel);
     stage.appendChild(debugReadout);
     stage.addEventListener('click', function (e) {
-      var p = toStage(e);
+      var p = toLocal(e, document.getElementById('viewport'));
       var s = 'Scene x=' + Math.round(p.x) + ' y=' + Math.round(p.y);
       if (e.target.tagName === 'IMG') {
         var r = e.target.getBoundingClientRect();
@@ -1120,5 +1204,6 @@
   // ---------- start ----------
 
   buildScene();
+  say(C.ui.welcome);
   if (DEBUG) setupDebug();
 })();

@@ -6,7 +6,7 @@
 
 ## Test links (add to the end of the address)
 - `?reset` clears all progress.
-- `?debug` shows the answers; clicking any photo shows click coordinates (bottom-left) so you can set hotspots. On the Georgia map it shows latitude/longitude.
+- `?debug` shows the answers. Clicking shows coordinates bottom-left: "Scene x/y" for easter eggs (room view is 1460x640), "Photo x/y" for photo hotspots, latitude/longitude on the Georgia map.
 - `?solve=3` marks item 3 solved. `?solve=1,2,5` or `?solve=all` also work.
 - Combine with `&`, for example `index.html?reset&debug`.
 
