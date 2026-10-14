@@ -111,7 +111,7 @@ html, body {
   left: 0; top: 0;
   width: 1600px; height: 470px;
   pointer-events: none;
-  z-index: 6;
+  z-index: 4;
 }
 
 .note {
@@ -229,7 +229,7 @@ html, body {
 .mini-flower { width: 64px; height: 64px; margin-top: 18px; }
 
 /* 3: ticket on the board */
-.it3 { left: 470px; top: 290px; --r: -5deg; }
+.it3 { left: 820px; top: 250px; --r: -5deg; }
 .mini-ticket {
   width: 300px; height: 112px;
   padding: 16px 22px;
@@ -242,6 +242,18 @@ html, body {
 .it3 { filter: drop-shadow(3px 6px 6px rgba(0, 0, 0, 0.4)); }
 .mt-a { font: 38px 'Russo One', sans-serif; letter-spacing: 3px; }
 .mt-b { font-size: 14px; letter-spacing: 2px; opacity: 0.85; }
+
+.fingerprint {
+  position: absolute;
+  left: 500px; top: 250px;
+  width: 170px; height: 170px;
+  padding: 14px 20px;
+  background: #fbf8f0;
+  transform: rotate(5deg);
+  box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}
+.fingerprint svg { width: 100%; height: 100%; }
 
 /* 4: X-ray films on the board */
 .it4 { left: 440px; top: 70px; }
@@ -405,7 +417,7 @@ html, body {
 }
 .dialog h3 { margin: 0 0 14px; font-size: 26px; }
 .dialog p { margin: 14px 0 20px; font-size: 24px; line-height: 1.35; }
-.dialog-photo { display: block; max-width: 600px; max-height: 440px; margin: 0 auto; border: 8px solid #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+.dialog-photo { display: block; max-width: 600px; max-height: 380px; margin: 0 auto; border: 8px solid #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
 
 /* ---------- item 1: door ---------- */
 

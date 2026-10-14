@@ -292,6 +292,16 @@
     return '';
   }
 
+  // Decorative fingerprint: concentric arcs.
+  function fingerprintSVG() {
+    var out = '';
+    for (var i = 0; i < 9; i++) {
+      var r = 8 + i * 6;
+      out += '<path d="M' + (60 - r) + ' 75 a' + r + ' ' + (r * 1.25) + ' 0 0 1 ' + (2 * r) + ' 0' + '" fill="none" stroke="#3d4a5c" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="' + (i % 2 ? '40 4' : '60 6') + '"/>';
+    }
+    return out;
+  }
+
   function flowerSVGInner() {
     var petals = '';
     for (var i = 0; i < 6; i++) {
@@ -305,7 +315,9 @@
     sceneEl.style.setProperty('--wood', WOOD_BG);
     var html = '<div class="wall"></div>' +
       '<div class="board"><div class="cork"></div></div>' +
-      '<svg class="board-strings" viewBox="0 0 1600 470"><polyline points="230,70 545,92 960,70 1395,82" fill="none" stroke="#b3121b" stroke-width="2.5"/></svg>' +
+      '<div class="fingerprint">' + pin('#e8b923') + '<svg viewBox="0 0 120 140">' + fingerprintSVG() + '</svg></div>' +
+      '<svg class="board-strings" viewBox="0 0 1600 470"><g fill="none" stroke="#b3121b" stroke-width="2.5">' +
+      '<polyline points="229,57 477,74"/><polyline points="917,74 1313,80"/><polyline points="917,74 966,248"/><polyline points="229,57 588,252"/></g></svg>' +
       '<div class="note paper">' + pin('#d22') + '<h3>' + esc(C.board.noteTitle) + '</h3><p>' + esc(C.board.noteText) + '</p></div>' +
       '<div class="desk"></div><div class="desk-edge"></div>' +
       '<svg class="lamp" viewBox="0 0 320 330">' +
