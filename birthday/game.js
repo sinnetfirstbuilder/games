@@ -775,7 +775,7 @@
     var img = b.querySelector('.i5-img');
     var lens = b.querySelector('.i5-lens');
     var mark = b.querySelector('.i5-mark');
-    var LENS = 220, zoom = d.zoom || 2.5;
+    var LENS = 260, zoom = d.zoom || 2.5; // LENS matches .i5-lens size in style.css
     var done = api.solved;
     lens.style.backgroundImage = 'url("' + d.photo + '")';
 
@@ -848,7 +848,7 @@
       ? '<text class="sea" x="' + sea[0] + '" y="' + sea[1] + '">' + esc(d.seaLabel) + '</text>' : '';
     var marks = (d.landmarks || []).map(function (m) {
       var q = project(m.lon, m.lat, size);
-      return '<g class="landmark" transform="translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')"><circle r="6"/><text x="10" y="5">' + esc(m.name) + '</text></g>';
+      return '<g class="landmark" transform="translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')"><circle r="6"/><text x="' + (m.labelLeft ? -10 : 10) + '" y="5" text-anchor="' + (m.labelLeft ? 'end' : 'start') + '">' + esc(m.name) + '</text></g>';
     }).join('');
     b.innerHTML =
       '<div class="i6-left"><svg class="i6-map" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">' +

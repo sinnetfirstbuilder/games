@@ -542,7 +542,7 @@ html, body {
 
 .body-1 { display: flex; align-items: center; gap: 40px; }
 .i1-story { width: 430px; font-size: 24px; line-height: 1.45; }
-.i1-story p { margin: 0; }
+.i1-story p { margin: 0; white-space: pre-line; }
 .i1-right { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 26px; }
 .i1-wall {
   width: 640px; height: 470px;
@@ -774,7 +774,7 @@ html, body {
 .i5-img { display: block; max-width: 1240px; max-height: 590px; cursor: none; }
 .i5-lens {
   position: absolute;
-  width: 220px; height: 220px;
+  width: 260px; height: 260px;
   border: 6px solid #2b2b2b;
   border-radius: 50%;
   background-repeat: no-repeat;

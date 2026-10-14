@@ -44,8 +44,8 @@ window.CONTENT = {
       sceneLabel: 'Дело №1',
       symbol: 'w',
       hint: 'Жми «УДАР!», когда бегунок внутри зелёной зоны. Можно нажимать пробел.',
-      story: 'Ещё до нашей дружбы дверь студии пилатеса заклинило намертво, а ты осталась внутри. Спасение пришло с ноги. Повтори этот подвиг: ударь, когда бегунок в зелёной зоне.',
-      kickButton: 'УДАР!',
+      story: 'С этого началась наша дружба.\nС двери, которую заело, моей ноги и твоего шока.\nДавай повторим!',
+      kickButton: 'УДАР',
       meterLabel: 'Сила удара',
       doorSign: 'ПИЛАТЕС',
       // Green zone width as a share of the meter (0.12 = 12%).
@@ -122,7 +122,7 @@ window.CONTENT = {
       sceneLabel: 'Снимки',
       symbol: 'k',
       hint: 'Когда навалилось всё сразу, что-то не выдерживает и даёт трещину.',
-      caseCard: 'Студентка, сессия, в день экзамена начались месячные. Что случилось?',
+      caseCard: 'Сессия, в день экзамена начались месячные. Что случилось?',
       instruction: 'Выбери снимок, который объясняет случившееся.',
       // id must be one of: healthy, cavity, braces, wisdom, filling, cracked.
       correct: 'cracked',
@@ -140,14 +140,14 @@ window.CONTENT = {
       title: 'Фотография и лупа',
       sceneLabel: 'Мы',
       symbol: 'e',
-      hint: 'Посмотри на её руки.',
+      hint: 'Посмотри на свои руки.',
       photo: 'photos/item5-us.jpg',
       question: 'Самая важная улика всегда на виду. Найди её у Маши.',
       // Hidden detail. x and y are shares of the photo width and height
       // (0 = left/top, 1 = right/bottom). r is the radius as a share of
       // the photo width. Use ?debug and click the photo to read values.
       hotspot: { x: 0.313, y: 0.789, r: 0.025 },
-      zoom: 2.5,
+      zoom: 10,
       wrongLines: [
         'Не здесь.',
         'Холодно.',
@@ -177,8 +177,15 @@ window.CONTENT = {
       // Grid line spacing in degrees.
       gridStep: 0.5,
       // Places drawn on the map for orientation only (not stops).
+      // labelLeft: true puts the name on the left of the dot.
       landmarks: [
-        { name: 'Тбилиси', lat: 41.7151, lon: 44.8271 }
+        { name: 'Тбилиси', lat: 41.7151, lon: 44.8271 },
+        { name: 'Мцхета', lat: 41.846, lon: 44.719 },
+        { name: 'Рустави', lat: 41.54, lon: 44.99 },
+        { name: 'Телави', lat: 41.9198, lon: 45.4732, labelLeft: true },
+        { name: 'Гурджаани', lat: 41.7429, lon: 45.8011 },
+        { name: 'Кварели', lat: 41.9549, lon: 45.8172 },
+        { name: 'Дедоплисцкаро', lat: 41.4657, lon: 46.1039, labelLeft: true }
       ],
       // Trip stops in order. lat/lon in decimal degrees (Google Maps: right-click → copy).
       stops: [
@@ -194,21 +201,21 @@ window.CONTENT = {
       title: 'Заблокированный телефон',
       sceneLabel: 'Телефон',
       symbol: '6-7',
-      hint: 'Злодей тот, кто вечно что-то замышляет. И ты его прекрасно знаешь.',
-      captchaTitle: 'Выберите изображение со злодеем',
+      hint: 'Маша говорит, что он насилует женщин. А еще он пидор',
+      captchaTitle: 'Выберите изображение пидора',
       captchaSub: 'Нажмите на подходящую картинку',
       unlockedText: '6-7',
       // 9 photos. Exactly one has villain: true.
       people: [
-        { photo: 'photos/captcha-1.jpg', text: 'Черновик: подозрительно серьёзный, но сегодня не он.' },
-        { photo: 'photos/captcha-2.jpg', text: 'Билан? Невозможное возможно, но не в этот раз.' },
-        { photo: 'photos/captcha-3.jpg', text: 'Канье? Он подарил нам концерт. Какой же он злодей!' },
-        { photo: 'photos/captcha-4.jpg', text: 'Крид? Холостяк, но не злодей.' },
-        { photo: 'photos/captcha-5.jpg', text: 'Максим? Слишком очевидно. Злодей хитрее.' },
-        { photo: 'photos/captcha-6.jpg', text: 'Черновик: этот подозреваемый чист.' },
+        { photo: 'photos/captcha-1.jpg', text: 'Из другой категории' },
+        { photo: 'photos/captcha-2.jpg', text: 'Невозможное возможно, но не в этот раз.' },
+        { photo: 'photos/captcha-3.jpg', text: 'ЭЭЭЭЭЙ Ye is God' },
+        { photo: 'photos/captcha-4.jpg', text: 'Straight as an arrow' },
+        { photo: 'photos/captcha-5.jpg', text: 'Никогда! Максим лучше всех' },
+        { photo: 'photos/captcha-6.jpg', text: 'Из другой категории' },
         { photo: 'photos/captcha-villain.jpg', text: 'Злодей пойман!', villain: true },
-        { photo: 'photos/captcha-8.jpg', text: 'Тиньков? Слишком занят. Не злодей.' },
-        { photo: 'photos/captcha-9.jpg', text: 'Черновик: невиновен. Наверное.' }
+        { photo: 'photos/captcha-8.jpg', text: 'Из другой категории' },
+        { photo: 'photos/captcha-9.jpg', text: '(Если честно, я не знаю, кто это)' }
       ]
     }
   },
