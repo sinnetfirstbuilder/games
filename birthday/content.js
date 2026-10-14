@@ -105,10 +105,10 @@ window.CONTENT = {
       show: 'LIVE · ОДИН ВЕЧЕР',
       venue: 'Стадион, главная сцена',
       fields: [
-        { label: 'ДАТА', value: '00.00' },
-        { label: 'ВРЕМЯ', value: '20:00' },
-        { label: 'СЕКТОР', value: 'A' },
-        { label: 'РЯД', value: '7' }
+        { label: 'ВОРОТА', value: 'H' },
+        { label: 'ЯРУС', value: 'I' },
+        { label: 'СЕКТОР', value: '9' },
+        { label: 'РЯД', value: '11' }
       ],
       seatLabel: 'МЕСТО',
       // Shown in the seat field until the ticket is complete.
@@ -140,9 +140,9 @@ window.CONTENT = {
       title: 'Фотография и лупа',
       sceneLabel: 'Мы',
       symbol: 'e',
-      hint: 'Води лупой по фото медленно. Деталь маленькая.',
+      hint: 'Посмотри на её руки.',
       photo: 'photos/item5-us.jpg',
-      question: 'Черновик: найди на фото маленькую жёлтую звёздочку и нажми на неё.',
+      question: 'Самая важная улика всегда на виду. Найди её у Маши.',
       // Hidden detail. x and y are shares of the photo width and height
       // (0 = left/top, 1 = right/bottom). r is the radius as a share of
       // the photo width. Use ?debug and click the photo to read values.
@@ -172,14 +172,21 @@ window.CONTENT = {
       allFoundLine: 'Все места найдены!',
       assemblePrompt: 'Разложи фотографии по порядку поездки.',
       assembleButton: 'Разложить фото',
+      // Part of the map shown in the close-up, in degrees.
+      mapView: { west: 44.4, east: 46.5, south: 41.3, north: 42.2 },
+      // Grid line spacing in degrees.
+      gridStep: 0.5,
+      // Places drawn on the map for orientation only (not stops).
+      landmarks: [
+        { name: 'Тбилиси', lat: 41.7151, lon: 44.8271 }
+      ],
       // Trip stops in order. lat/lon in decimal degrees (Google Maps: right-click → copy).
       stops: [
-        { name: 'Тбилиси',  lat: 41.7151, lon: 44.8271, photo: 'photos/georgia-1.jpg', clue: 'Здесь всё началось: столица, серные бани и хинкали.' },
-        { name: 'Казбеги',  lat: 42.6566, lon: 44.6431, photo: 'photos/georgia-2.jpg', clue: 'Церковь на горе, а за ней ледник. Высоко!' },
-        { name: 'Сигнахи',  lat: 41.6197, lon: 45.9220, photo: 'photos/georgia-3.jpg', clue: 'Город любви, где можно пожениться в любой день.' },
-        { name: 'Боржоми',  lat: 41.8394, lon: 43.3917, photo: 'photos/georgia-4.jpg', clue: 'Та самая вода, которую пьют от всего.' },
-        { name: 'Кутаиси',  lat: 42.2679, lon: 42.6946, photo: 'photos/georgia-5.jpg', clue: 'Город, куда прилетают лоукосты.' },
-        { name: 'Батуми',   lat: 41.6168, lon: 41.6367, photo: 'photos/georgia-6.jpg', clue: 'Море, бульвар и статуи, которые медленно обнимаются.' }
+        { name: 'Сигнахи',            lat: 41.6186, lon: 45.9217, photo: 'photos/georgia-1.jpg', clue: 'Черновик: город на холме, крепостная стена и вид на всю Алазанскую долину.' },
+        { name: 'Сагареджо',          lat: 41.7340, lon: 45.3315, photo: 'photos/georgia-2.jpg', clue: 'Черновик: первый городок Кахетии по дороге из Тбилиси.' },
+        { name: 'Гомборский перевал', lat: 41.8686, lon: 45.3472, photo: 'photos/georgia-3.jpg', clue: 'Черновик: серпантин через лес, где уши закладывает от высоты.' },
+        { name: 'Кисисхеви',          lat: 41.8978, lon: 45.5436, photo: 'photos/georgia-4.jpg', clue: 'Черновик: деревня у Телави, виноградники и тишина.' },
+        { name: 'Коджори',            lat: 41.6640, lon: 44.7020, photo: 'photos/georgia-5.jpg', clue: 'Черновик: над Тбилиси, в горах, куда едут за прохладой.' }
       ]
     },
 

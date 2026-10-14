@@ -1070,3 +1070,10 @@ html, body {
 
 /* Text on light objects inside close-ups keeps a dark color. */
 .i1-sign, .i4-label, .polaroid, .i2-bookmark { color: #2b2b2b; }
+
+/* Orientation landmarks on the Georgia map (not stops). */
+.landmark { pointer-events: none; }
+.landmark circle { fill: #3a2a18; stroke: #f6eed6; stroke-width: 2; }
+.landmark text { font: 700 20px 'PT Serif', serif; fill: #3a2a18; }
+.pol-cap.long { font-size: 20px; }
+.polaroid.small .pol-cap.long { font-size: 14px; }

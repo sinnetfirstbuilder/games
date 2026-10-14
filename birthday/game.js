@@ -230,16 +230,20 @@
   }
 
   // Georgia map projection: equirectangular, standard parallel 42.3°N.
-  var GEO = { lon0: 39.8, lon1: 46.9, lat0: 40.95, lat1: 43.7, cos: Math.cos(42.3 * Math.PI / 180) };
-  function geoSize(width) {
-    var k = width / ((GEO.lon1 - GEO.lon0) * GEO.cos);
-    return { k: k, w: width, h: (GEO.lat1 - GEO.lat0) * k };
+  // Equirectangular projection of a lon/lat box onto a map of the given width.
+  // The standard parallel is the middle of the box, so shapes look right.
+  var GEORGIA_BOX = { west: 39.8, east: 46.9, south: 40.95, north: 43.7 };
+  function geoSize(width, box) {
+    box = box || GEORGIA_BOX;
+    var cos = Math.cos((box.south + box.north) / 2 * Math.PI / 180);
+    var k = width / ((box.east - box.west) * cos);
+    return { k: k, w: width, h: (box.north - box.south) * k, cos: cos, box: box };
   }
   function project(lon, lat, size) {
-    return [(lon - GEO.lon0) * GEO.cos * size.k, (GEO.lat1 - lat) * size.k];
+    return [(lon - size.box.west) * size.cos * size.k, (size.box.north - lat) * size.k];
   }
   function unproject(x, y, size) {
-    return [x / (GEO.cos * size.k) + GEO.lon0, GEO.lat1 - y / size.k];
+    return [x / (size.cos * size.k) + size.box.west, size.box.north - y / size.k];
   }
   function outlinePath(size) {
     return window.GEORGIA_OUTLINE.map(function (p, i) {
@@ -824,23 +828,33 @@
     var stops = d.stops, M = stops.length;
     if (api.solved) { assemble(true); return null; }
 
-    var size = geoSize(880);
+    var box = d.mapView || GEORGIA_BOX;
+    var size = geoSize(880, box);
     var W = 880, H = Math.round(size.h);
+    var step = d.gridStep || 1;
     var grid = '';
-    for (var lon = 40; lon <= 46; lon++) {
-      var gx = project(lon, 0, size)[0];
-      grid += '<line x1="' + gx + '" y1="0" x2="' + gx + '" y2="' + H + '"/><text x="' + (gx + 3) + '" y="' + (H - 4) + '">' + lon + '°</text>';
+    for (var lon = Math.ceil(box.west / step) * step; lon <= box.east; lon += step) {
+      var gx = project(lon, box.north, size)[0];
+      grid += '<line x1="' + gx + '" y1="0" x2="' + gx + '" y2="' + H + '"/><text x="' + (gx + 3) + '" y="' + (H - 4) + '">' + +lon.toFixed(2) + '°</text>';
     }
-    for (var lat = 41; lat <= 43; lat++) {
-      var gy = project(GEO.lon0, lat, size)[1];
-      grid += '<line x1="0" y1="' + gy + '" x2="' + W + '" y2="' + gy + '"/><text x="3" y="' + (gy - 3) + '">' + lat + '°</text>';
+    for (var lat = Math.ceil(box.south / step) * step; lat <= box.north; lat += step) {
+      var gy = project(box.west, lat, size)[1];
+      grid += '<line x1="0" y1="' + gy + '" x2="' + W + '" y2="' + gy + '"/><text x="3" y="' + (gy - 3) + '">' + +lat.toFixed(2) + '°</text>';
     }
-    var sea = project(40.15, 42.35, size);
+    // The sea label only makes sense when the Black Sea is inside the view.
+    var seaLon = 40.15, seaLat = 42.35;
+    var sea = project(seaLon, seaLat, size);
+    var seaHTML = (seaLon > box.west && seaLon < box.east && seaLat > box.south && seaLat < box.north)
+      ? '<text class="sea" x="' + sea[0] + '" y="' + sea[1] + '">' + esc(d.seaLabel) + '</text>' : '';
+    var marks = (d.landmarks || []).map(function (m) {
+      var q = project(m.lon, m.lat, size);
+      return '<g class="landmark" transform="translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')"><circle r="6"/><text x="10" y="5">' + esc(m.name) + '</text></g>';
+    }).join('');
     b.innerHTML =
       '<div class="i6-left"><svg class="i6-map" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">' +
-      '<rect width="' + W + '" height="' + H + '" fill="#e9dfc6"/><g class="graticule">' + grid + '</g>' +
-      '<text class="sea" x="' + sea[0] + '" y="' + sea[1] + '">' + esc(d.seaLabel) + '</text>' +
-      '<path d="' + outlinePath(size) + '" fill="#f6eed6" stroke="#7a5a2e" stroke-width="2"/>' +
+      '<rect width="' + W + '" height="' + H + '" fill="#d9caa3"/><g class="graticule">' + grid + '</g>' +
+      seaHTML +
+      '<path d="' + outlinePath(size) + '" fill="#f6eed6" stroke="#7a5a2e" stroke-width="3" stroke-dasharray="10 4"/>' + marks +
       '<polyline class="i6-string" points="" fill="none" stroke="#c0161e" stroke-width="3"/><g class="i6-pins"></g><g class="i6-debug"></g></svg>' +
       '<div class="i6-tray"></div></div>' +
       '<div class="i6-side paper-card"><div class="i6-stop"></div><p class="i6-clue"></p><p class="i6-prompt">' + esc(d.mapPrompt) + '</p>' +
@@ -881,7 +895,7 @@
         pinsG.insertAdjacentHTML('beforeend',
           '<g class="map-pin" transform="translate(' + t[0] + ' ' + t[1] + ')"><ellipse cx="3" cy="2" rx="7" ry="3" fill="rgba(0,0,0,.3)"/>' +
           '<line x1="0" y1="0" x2="0" y2="-16" stroke="#555" stroke-width="2"/><circle cy="-20" r="8" fill="#d6262f" stroke="#7a0d12" stroke-width="1.5"/><circle cx="-3" cy="-23" r="2.5" fill="#ff9a9a"/></g>');
-        var pol = div('polaroid small', '<div class="pol-photo"><img src="' + esc(stops[idx].photo) + '" alt=""></div><div class="pol-cap">' + esc(stops[idx].name) + '</div>');
+        var pol = div('polaroid small', '<div class="pol-photo"><img src="' + esc(stops[idx].photo) + '" alt=""></div><div class="pol-cap' + (stops[idx].name.length > 12 ? ' long' : '') + '">' + esc(stops[idx].name) + '</div>');
         pol.style.setProperty('--rot', rand(-6, 6).toFixed(1) + 'deg');
         tray.appendChild(pol);
         idx++;
@@ -926,7 +940,7 @@
           '<path d="' + L.d + '" fill="none" stroke="#3a0006" stroke-width="' + (sw + 8) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>' +
           '<path d="' + L.d + '" fill="none" stroke="#ff2d55" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>' +
           '<circle cx="' + L.ball.cx + '" cy="' + L.ball.cy + '" r="' + (sw * 0.85) + '" fill="#ff2d55" stroke="#3a0006" stroke-opacity=".55" stroke-width="4"/></svg>';
-        var pol = div('polaroid', '<div class="pol-photo"><img src="' + esc(stops[i].photo) + '" alt="" draggable="false">' + slice + '</div><div class="pol-cap">' + esc(stops[i].name) + '</div>');
+        var pol = div('polaroid', '<div class="pol-photo"><img src="' + esc(stops[i].photo) + '" alt="" draggable="false">' + slice + '</div><div class="pol-cap' + (stops[i].name.length > 12 ? ' long' : '') + '">' + esc(stops[i].name) + '</div>');
         // Scatter on the left and right of the grid.
         var leftSide = i % 2 === 0;
         var k2 = Math.floor(i / 2);
